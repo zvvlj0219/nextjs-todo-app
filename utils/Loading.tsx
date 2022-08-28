@@ -1,9 +1,4 @@
-import {
-    useContext,
-    createContext,
-    useReducer,
-    useMemo,
-} from 'react'
+import { useContext, createContext, useReducer, useMemo } from 'react'
 import styles from '../styles/loading.module.css'
 
 type State = {
@@ -12,7 +7,7 @@ type State = {
 
 const ActionType = {
     LOAD_START: 'LOAD_START',
-    LOAD_FINISH: 'LOAD_FINISH',
+    LOAD_FINISH: 'LOAD_FINISH'
 } as const
 
 type Action = {
@@ -57,7 +52,11 @@ export const useLoading = () => {
     return useContext(LoadingContext)
 }
 
-export const LoadingContextProvider = ({ children }: { children: React.ReactNode }) => {
+export const LoadingContextProvider = ({
+    children
+}: {
+    children: React.ReactNode
+}) => {
     const [state, dispatch] = useReducer(loadingReducer, initialState())
 
     const startLoad = () => {
@@ -85,7 +84,7 @@ export const LoadingContextProvider = ({ children }: { children: React.ReactNode
 
     return (
         <LoadingContext.Provider value={value}>
-            { children }
+            {children}
         </LoadingContext.Provider>
     )
 }
@@ -100,16 +99,13 @@ export const LoadingIcon = ({ loading }: State) => {
                     ${!loading && styles.hidden}
                 `}
             >
-                <div
-                    id='iconWrapper'
-                    className={styles.icon_wrapper}
-                >
+                <div id='iconWrapper' className={styles.icon_wrapper}>
                     {/* icon core*/}
                     <div className={styles.spinner_box}>
                         <div>...loading</div>
                         <div className={styles.circle_border}>
                             <div className={styles.circle_core} />
-                        </div>  
+                        </div>
                     </div>
                 </div>
             </div>

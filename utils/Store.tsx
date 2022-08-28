@@ -9,7 +9,7 @@ import type { Dispatch } from 'react'
 import type { Todo } from '../types/type'
 
 type Props = {
-    children: ReactNode,
+    children: ReactNode
 }
 
 type State = {
@@ -20,7 +20,7 @@ export const ActionType = {
     INIT_TODO: 'INIT_TODO',
     ADD_TODO: 'ADD_TODO',
     EDIT_TODO: 'EDIT_TODO',
-    DELETE_TODO: 'DELETE_TODO',
+    DELETE_TODO: 'DELETE_TODO'
 } as const
 
 type Action = {
@@ -30,13 +30,11 @@ type Action = {
 }
 
 const todoReducer = (state: State, action: Action): State => {
-    switch(action.type) {
-        case ActionType.INIT_TODO: 
-            if(action.initialState) {
+    switch (action.type) {
+        case ActionType.INIT_TODO:
+            if (action.initialState) {
                 return {
-                    todoList: [
-                        ...action.initialState,
-                    ]
+                    todoList: [...action.initialState]
                 }
             }
 
@@ -53,7 +51,7 @@ const todoReducer = (state: State, action: Action): State => {
                 ]
             }
         }
-        case ActionType.EDIT_TODO:{
+        case ActionType.EDIT_TODO: {
             if (typeof action.payload === 'undefined') return state
 
             const updatedTodoList = state.todoList.map((todoObj: Todo) => {
@@ -90,29 +88,17 @@ const initialStateFactory = (initialState?: State): State => {
 
 const TodoContext = createContext(
     {} as {
-        state: State,
+        state: State
         dispatch: Dispatch<Action>
     }
 )
 
 export const useTodo = () => useContext(TodoContext)
 
-export const TodoContextProvider = (
-    { children }: Props
-) => {
-    const [state, dispatch] = useReducer(
-        todoReducer,
-        initialStateFactory()
-    )
+export const TodoContextProvider = ({ children }: Props) => {
+    const [state, dispatch] = useReducer(todoReducer, initialStateFactory())
 
-    const value = useMemo(
-        () => ({ state, dispatch }),
-        [state, dispatch]
-    )
+    const value = useMemo(() => ({ state, dispatch }), [state, dispatch])
 
-    return (
-        <TodoContext.Provider value={value}>
-            { children }
-        </TodoContext.Provider>
-    )
+    return <TodoContext.Provider value={value}>{children}</TodoContext.Provider>
 }

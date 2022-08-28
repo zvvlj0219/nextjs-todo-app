@@ -1,6 +1,4 @@
 import mongoose from 'mongoose'
-import type { ObjectId } from 'mongoose'
-import type { Doc } from '../types/type'
 
 // ConnectionStates {
 //     disconnected: 0,
@@ -9,7 +7,6 @@ import type { Doc } from '../types/type'
 //     disconnecting: 3,
 //     uninitialized: 99,
 // }
-
 
 interface Connection {
     isConnected: number
@@ -36,11 +33,11 @@ class DB {
             return
         }
 
-        if (mongoose.connections.length > 0) {            
+        if (mongoose.connections.length > 0) {
             this.connection.isConnected = mongoose.connections[0].readyState
 
             if (this.connection.isConnected === 1) {
-                console.log('use previous connection');
+                console.log('use previous connection')
                 return
             }
 
@@ -55,7 +52,10 @@ class DB {
     }
 
     async disconnect() {
-        if (this.connection.isConnected && process.env.NODE_ENV === 'production') {
+        if (
+            this.connection.isConnected &&
+            process.env.NODE_ENV === 'production'
+        ) {
             await mongoose.disconnect()
             this.connection.isConnected = 0
             console.log('mongoose disconnected')
@@ -65,10 +65,10 @@ class DB {
         }
     }
 
-    convertDocToObj(doc: any ) {
-        doc._id = doc._id.toString();
-        doc.createdAt = doc.createdAt.toString();
-        doc.updatedAt = doc.updatedAt.toString();
+    convertDocToObj(doc: any) {
+        doc._id = doc._id.toString()
+        doc.createdAt = doc.createdAt.toString()
+        doc.updatedAt = doc.updatedAt.toString()
         return doc
     }
 }

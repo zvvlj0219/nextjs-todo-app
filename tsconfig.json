@@ -12,12 +12,16 @@
       "types"
     ],
     "esModuleInterop": true,
-    "module": "esnext",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/models/*": ["models/*"]
+    }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
