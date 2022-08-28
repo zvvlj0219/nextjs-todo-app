@@ -1,5 +1,5 @@
 import { NextApiResponse, NextApiRequest } from 'next'
-import TodoSchema from '../../../models/Todo'
+import TodoSchema from '@/models/Todo'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const {

@@ -1,4 +1,4 @@
-import mongoose, { models } from "mongoose";
+import mongoose, { models } from 'mongoose'
 
 interface TodoDoc extends mongoose.Document {
     todo: string
@@ -18,8 +18,8 @@ const todoSchema = new mongoose.Schema(
     }
 )
 
-const schema = models.Todo 
-? (models.Todo as TodoModel)
-: mongoose.model<TodoDoc, TodoModel>('Todo', todoSchema)
+const schema = models.Todo
+    ? (models.Todo as TodoModel)
+    : mongoose.model<TodoDoc, TodoModel>('Todo', todoSchema)
 
 export default schema

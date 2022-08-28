@@ -9,13 +9,17 @@ import { useLoading } from '../utils/Loading'
 import styles from '../styles/app.module.css'
 import type { Todo } from '../types/type'
 
-type Props = { 
+type Props = {
     todoList: Todo[]
 }
 
 const Home = ({ todoList }: Props) => {
-    const { state: {loading}, startLoad, finishLoad} = useLoading()
-    const [isValid, setIsValid] = useState<Boolean>(true)
+    const {
+        state: { loading },
+        startLoad,
+        finishLoad
+    } = useLoading()
+    const [isValid, setIsValid] = useState<boolean>(true)
     const [newTodo, setNewTodo] = useState<string>('')
 
     const { state, dispatch } = useTodo()
@@ -27,45 +31,51 @@ const Home = ({ todoList }: Props) => {
             initialState: todoList
         })
         finishLoad()
-    },[dispatch])
-    
-    const onChangeHandler = useCallback((
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        setNewTodo((event.target as HTMLInputElement).value)
-    }, [setNewTodo])
+    }, [startLoad, dispatch, finishLoad, todoList])
 
-    const addTodoHandler  = useCallback(async (_newTodo: string) => {
-        if (_newTodo.length < 4) {
-            setIsValid(false)
-        } else {
-            const baseurl = process.env.NEXT_PUBLIC_DEVELOPMENT_BASEURL as RequestInfo | URL
-            const res = await fetch(`${baseurl}/api/todos/todo`,{
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    todo: _newTodo
+    const onChangeHandler = useCallback(
+        (event: React.ChangeEvent<HTMLInputElement>) => {
+            setNewTodo((event.target as HTMLInputElement).value)
+        },
+        [setNewTodo]
+    )
+
+    const addTodoHandler = useCallback(
+        async (_newTodo: string) => {
+            if (_newTodo.length < 4) {
+                setIsValid(false)
+            } else {
+                const baseurl = process.env.NEXT_PUBLIC_DEVELOPMENT_BASEURL as
+                    | RequestInfo
+                    | URL
+                const res = await fetch(`${baseurl}/api/todos/todo`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        todo: _newTodo
+                    })
                 })
-            })
-            const { result } = await res.json()
+                const { result } = await res.json()
 
-            dispatch({
-                type: ActionType.ADD_TODO,
-                payload: {
-                    _id: result._id,
-                    todo: result.todo
-                }
-            })
-            setIsValid(true)
-            setNewTodo('')
-        }
-    },[dispatch])
+                dispatch({
+                    type: ActionType.ADD_TODO,
+                    payload: {
+                        _id: result._id,
+                        todo: result.todo
+                    }
+                })
+                setIsValid(true)
+                setNewTodo('')
+            }
+        },
+        [dispatch]
+    )
 
     useEffect(() => {
         initTodo()
-    }, [])
+    }, [initTodo])
 
     return (
         <Layout title='home'>
@@ -86,37 +96,31 @@ const Home = ({ todoList }: Props) => {
                     add
                 </Button>
                 <div
-                    className={`${isValid && styles.valid} ${styles.validation_msg}`}
+                    className={`${isValid && styles.valid} ${
+                        styles.validation_msg
+                    }`}
                 >
                     Enter at least 5 characters
                 </div>
             </div>
 
             <div className={styles.todo_list_container}>
-                {
-                    !loading && state.todoList && ( 
-                        state.todoList.map(data => (
-                            <div 
-                                className={styles.todo_container}
-                                key={data._id}
-                            >
-                                <TodoForm
-                                    _id={data._id}
-                                    todo={data.todo}
-                                />
-                            </div>
-                    )))
-                }
-                {
-                    !loading && state.todoList.length === 0 && (
-                        <>
-                            <h3 style={{textAlign: 'center'}}>
-                                You have no Todos<br />
-                                Lets add new Todo!
-                            </h3>
-                        </>
-                    )
-                }
+                {!loading &&
+                    state.todoList &&
+                    state.todoList.map((data) => (
+                        <div className={styles.todo_container} key={data._id}>
+                            <TodoForm _id={data._id} todo={data.todo} />
+                        </div>
+                    ))}
+                {!loading && state.todoList.length === 0 && (
+                    <>
+                        <h3 style={{ textAlign: 'center' }}>
+                            You have no Todos
+                            <br />
+                            Lets add new Todo!
+                        </h3>
+                    </>
+                )}
             </div>
         </Layout>
     )
@@ -130,10 +134,10 @@ export const getStaticProps = async () => {
     return {
         props: {
             todoList: todoList
-            ? todoList.map((doc: any) =>{
-                return db.convertDocToObj(doc)
-            })
-            : []
+                ? todoList.map((doc: Todo) => {
+                      return db.convertDocToObj(doc)
+                  })
+                : []
         }
     }
 }

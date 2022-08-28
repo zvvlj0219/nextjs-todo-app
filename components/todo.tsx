@@ -12,24 +12,29 @@ const TodoForm = ({ _id, todo = '' }: Todo) => {
     const [isDelete, setIsDelte] = useState<boolean>(true)
     const [textField, setTextFeild] = useState<string>(todo)
 
-    const onFocusHandler = useCallback((cond: 'focus' | 'blur') => {
-        if (cond === 'focus') {
-            setIsEdit(true)
-            setIsDelte(false)
-        }
+    const onFocusHandler = useCallback(
+        (cond: 'focus' | 'blur') => {
+            if (cond === 'focus') {
+                setIsEdit(true)
+                setIsDelte(false)
+            }
 
-        if(cond === 'blur' && inputElement.current !== null) {
-            setIsEdit(false)
-            setIsDelte(true)
-            // call editTodoHandler
-            inputElement.current.blur()
-        }
-    }, [setIsEdit, setIsDelte])
+            if (cond === 'blur' && inputElement.current !== null) {
+                setIsEdit(false)
+                setIsDelte(true)
+                // call editTodoHandler
+                inputElement.current.blur()
+            }
+        },
+        [setIsEdit, setIsDelte]
+    )
 
     const onChangeHandler = useCallback(
         (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTextFeild((event.target as HTMLInputElement).value)
-    }, [setTextFeild])
+            setTextFeild((event.target as HTMLInputElement).value)
+        },
+        [setTextFeild]
+    )
 
     const onKeyPressHandler = (
         event: React.KeyboardEvent<HTMLInputElement>
@@ -39,38 +44,43 @@ const TodoForm = ({ _id, todo = '' }: Todo) => {
         }
     }
 
-    const editTodoHandler = useCallback(async (
-        new_todo: string,
-    ) => {
-        const baseurl = process.env.NEXT_PUBLIC_DEVELOPMENT_BASEURL as RequestInfo | URL
-        const res = await fetch(`${baseurl}/api/todos/todo`,{
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                _id,
-                todo: new_todo,
+    const editTodoHandler = useCallback(
+        async (new_todo: string) => {
+            const baseurl = process.env.NEXT_PUBLIC_DEVELOPMENT_BASEURL as
+                | RequestInfo
+                | URL
+            const res = await fetch(`${baseurl}/api/todos/todo`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    _id,
+                    todo: new_todo
+                })
             })
-        })
-        const { result } = await res.json()
+            const { result } = await res.json()
 
-        onFocusHandler('blur')
+            onFocusHandler('blur')
 
-        if (new_todo === todo) return  
+            if (new_todo === todo) return
 
-        dispatch({
-            type: ActionType.EDIT_TODO,
-            payload: {
-                _id,
-                todo: result.todo
-            }
-        })
-    },[])
+            dispatch({
+                type: ActionType.EDIT_TODO,
+                payload: {
+                    _id,
+                    todo: result.todo
+                }
+            })
+        },
+        [_id, dispatch, onFocusHandler, todo]
+    )
 
     const deleteTodoHandler = useCallback(async () => {
-        const baseurl = process.env.NEXT_PUBLIC_DEVELOPMENT_BASEURL as RequestInfo | URL
-        await fetch(`${baseurl}/api/todos/todo`,{
+        const baseurl = process.env.NEXT_PUBLIC_DEVELOPMENT_BASEURL as
+            | RequestInfo
+            | URL
+        await fetch(`${baseurl}/api/todos/todo`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -86,8 +96,7 @@ const TodoForm = ({ _id, todo = '' }: Todo) => {
                 _id
             }
         })
-
-    }, [])
+    }, [_id, dispatch])
 
     return (
         <>
