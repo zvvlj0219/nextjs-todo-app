@@ -1,3 +1,51 @@
+.flex_container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 50px;
+}
+
+.hero {
+    font-size: 4rem;
+    margin-right: -70px;
+    z-index: 2;
+}
+
+.hero_image {
+    box-shadow: 5px 2px 2px lightgray;
+    width: 400px;
+}
+
+.login_status {
+    padding: 5px 10px;
+    display: block;
+    font-size: 1.3rem;
+    margin-left: 10px;
+    margin-right: 1rem;
+    background-color: lightgray;
+}
+
+.hidden {
+    display: none;
+}
+  
+
+.login_status_signin {
+    background-color: lightskyblue;
+}
+
+.login_status_signout {
+    background-color: deeppink;
+}
+
+.show_todos {
+    padding: 20px 40px;
+    display: block;
+    font-size: 2rem;
+    margin: 0 auto;
+    background-color: skyblue;
+}
+
+
 .textfield_container {
     display: flex;
     flex: 1;

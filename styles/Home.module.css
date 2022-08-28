@@ -3,7 +3,7 @@
 }
 
 .main {
-  min-height: 100vh;
+  min-height: 80vh;
   padding: 4rem 0;
   /* flex: 1;
   display: flex;
@@ -13,9 +13,19 @@
 }
 
 .header {
-  height: 3rem;
+  display: flex;
+  justify-content: space-between;
+  height: 4.5rem;
+  padding: 1rem;
   width: 100%;
   box-shadow: 2px 2px 2px rgba(0,0,0,0.3);
+}
+
+.login_status_wrapper {
+  display: block;
+  align-items: center;
+  margin-right: 3rem;
+  margin-top: 0.3rem;
 }
 
 .footer {
@@ -113,6 +123,8 @@
 .logo {
   height: 1em;
   margin-left: 2rem;
+  margin-bottom: 1.5rem;
+  align-self: center;
 }
 
 @media (max-width: 600px) {

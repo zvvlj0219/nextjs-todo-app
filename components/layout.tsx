@@ -1,6 +1,8 @@
 import { ReactNode } from 'react'
+import LoginStatus from './loginStatus'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
+import Link from 'next/link'
 
 type Props = {
     title: string
@@ -21,7 +23,14 @@ const Layout = ({ title, children }: Props) => {
 
             <div className='layout'>
                 <header className={styles.header}>
-                    <h3 className={styles.logo}>create todo app</h3>
+                    <h3 className={styles.logo}>
+                        <Link href='/'>
+                            <a>create todo app</a>
+                        </Link>
+                    </h3>
+                    <div className={styles.login_status_wrapper}>
+                        <LoginStatus />
+                    </div>
                 </header>
                 <main className={styles.main}>{children}</main>
                 <footer className={styles.footer}>
