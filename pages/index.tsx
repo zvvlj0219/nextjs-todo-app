@@ -1,145 +1,41 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useCallback } from 'react'
 import Layout from '../components/layout'
 import Button from '../components/button'
-import TodoForm from '../components/todo'
-import db from '../utils/db'
-import TodoSchema from '../models/Todo'
-import { useTodo, ActionType } from '../utils/Store'
-import { useLoading } from '../utils/Loading'
+import { useRouter } from 'next/router'
+import { useSession } from 'next-auth/react'
+import Image from 'next/image'
+import appImage from '../public/todo-app.png'
 import styles from '../styles/app.module.css'
-import type { Todo } from '../types/type'
 
-type Props = {
-    todoList: Todo[]
-}
-
-const Home = ({ todoList }: Props) => {
-    const {
-        state: { loading },
-        startLoad,
-        finishLoad
-    } = useLoading()
-    const [isValid, setIsValid] = useState<boolean>(true)
-    const [newTodo, setNewTodo] = useState<string>('')
-
-    const { state, dispatch } = useTodo()
-
-    const initTodo = useCallback(() => {
-        startLoad()
-        dispatch({
-            type: ActionType.INIT_TODO,
-            initialState: todoList
-        })
-        finishLoad()
-    }, [startLoad, dispatch, finishLoad, todoList])
-
-    const onChangeHandler = useCallback(
-        (event: React.ChangeEvent<HTMLInputElement>) => {
-            setNewTodo((event.target as HTMLInputElement).value)
-        },
-        [setNewTodo]
-    )
-
-    const addTodoHandler = useCallback(
-        async (_newTodo: string) => {
-            if (_newTodo.length < 4) {
-                setIsValid(false)
-            } else {
-                const baseurl = process.env.NEXT_PUBLIC_DEVELOPMENT_BASEURL as
-                    | RequestInfo
-                    | URL
-                const res = await fetch(`${baseurl}/api/todos/todo`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        todo: _newTodo
-                    })
-                })
-                const { result } = await res.json()
-
-                dispatch({
-                    type: ActionType.ADD_TODO,
-                    payload: {
-                        _id: result._id,
-                        todo: result.todo
-                    }
-                })
-                setIsValid(true)
-                setNewTodo('')
-            }
-        },
-        [dispatch]
-    )
-
-    useEffect(() => {
-        initTodo()
-    }, [initTodo])
+const Home = () => {
+    const router = useRouter()
+    const { data: session } = useSession()
+    const showTodos = useCallback(() => {
+        if (session) {
+            router.push('/todo')
+        } else {
+            router.push('/auth/signin')
+        }
+    }, [])
 
     return (
         <Layout title='home'>
-            <div className={styles.textfield_container}>
-                <input
-                    type='text'
-                    placeholder='...'
-                    className={styles.textfeild}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        onChangeHandler(e)
-                    }}
-                    value={newTodo}
-                />
-                <Button
-                    className={styles.add_button}
-                    onClick={() => addTodoHandler(newTodo)}
-                >
-                    add
-                </Button>
-                <div
-                    className={`${isValid && styles.valid} ${
-                        styles.validation_msg
-                    }`}
-                >
-                    Enter at least 5 characters
+            <div>
+                <div className={styles.flex_container}>
+                    <h2 className={styles.hero}>Create Your Todo</h2>
+                    <div className={styles.hero_image}>
+                        <Image src={appImage} />
+                    </div>
                 </div>
-            </div>
-
-            <div className={styles.todo_list_container}>
-                {!loading &&
-                    state.todoList &&
-                    state.todoList.map((data) => (
-                        <div className={styles.todo_container} key={data._id}>
-                            <TodoForm _id={data._id} todo={data.todo} />
-                        </div>
-                    ))}
-                {!loading && state.todoList.length === 0 && (
-                    <>
-                        <h3 style={{ textAlign: 'center' }}>
-                            You have no Todos
-                            <br />
-                            Lets add new Todo!
-                        </h3>
-                    </>
-                )}
+                <Button
+                    onClick={() => showTodos()}
+                    className={styles.show_todos}
+                >
+                    show my Todos
+                </Button>
             </div>
         </Layout>
     )
-}
-
-export const getStaticProps = async () => {
-    await db.connect()
-    const todoList = await TodoSchema.find().lean()
-    await db.disconnect()
-
-    return {
-        props: {
-            todoList: todoList
-                ? todoList.map((doc: Todo) => {
-                      return db.convertDocToObj(doc)
-                  })
-                : []
-        }
-    }
 }
 
 export default Home
